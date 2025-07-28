@@ -3,21 +3,14 @@ name = "discovery-network"
 version = "0.1.0"
 edition = "2024"
 
+[workspace]
+members = [
+    "manager",
+    "target",
+    "shared"
+]
+
 [dependencies]
 serde = { version = "1.0.141", features = ["derive"] }
 serde_json = { version = "1.0.141" }
 sysinfo = { version = "0.36.1", optional = true }
-
-[features]
-manager = []
-target = ["sysinfo"]
-
-[[bin]]
-name = "network-check-manager"
-path = "src/bin/manager.rs"
-features = ["manager"]
-
-[[bin]]
-name = "network-check-target"
-path = "src/bin/target.rs"
-features = ["target"]
