@@ -23,7 +23,7 @@ struct DiscoveryResponse {
     msg_type: MessageType,
     hostname: String,
     ip_address: String,
-    cpu_usage: Vec<f32> ,
+    cpu_usage: Vec<f32>,
     memory_total_mb: u64,
     memory_used_mb: u64,
     cpu_temperature: f32,

@@ -1,1 +1,0 @@
-pub const DISCOVERTY_PORT: u16 = 42424;
