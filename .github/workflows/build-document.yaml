@@ -19,11 +19,11 @@ jobs:
         with:
           toolchain: stable
       - name: Build document
-        run: cargo doc --document-private-items --all --open --lib --bins --all-features --no-deps --target-dir /build
+        run: cargo doc --document-private-items --all --open --lib --bins --all-features --no-deps --target-dir
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: /build
+          folder: ./target/doc
           token: ${{ secrets.GITHUB_TOKEN }}
 
   actions-timeline:
