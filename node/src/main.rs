@@ -61,7 +61,5 @@ fn main() -> std::io::Result<()> {
                 socket.send_to(&response_data, src)?;
             }
         }
-
-        std::thread::sleep(std::time::Duration::from_secs(10));
     }
 }

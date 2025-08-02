@@ -19,14 +19,18 @@ impl SystemInfo {
         let sys = sysinfo::System::new_all();
 
         let machine_info = MachineInfo {
-            os: System::name().unwrap_or(String::from("OS  name not found")),
+            os: System::name().unwrap_or(String::from("OS name not found")),
             os_version: System::os_version().unwrap_or(String::from("OS version not found")),
             host_name: System::host_name().unwrap_or(String::from("Host name not found")),
             kernel_version: System::kernel_version()
                 .unwrap_or(String::from("Kernel version not found")),
             number_of_cpu: System::physical_core_count().unwrap_or(0),
             arch: System::cpu_arch(),
-            brand: sys.cpus()[0].brand().to_string(),
+            brand: sys
+                .cpus()
+                .first()
+                .map(|cpu| cpu.brand().to_string())
+                .unwrap_or_default(),
         };
 
         Self {
