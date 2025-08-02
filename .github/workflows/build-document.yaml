@@ -19,7 +19,7 @@ jobs:
         with:
           toolchain: stable
       - name: Build document
-        run: cargo doc --document-private-items --all --open --lib --bins --all-features --no-deps --target-dir
+        run: cargo doc --document-private-items --all --open --lib --bins --all-features --no-deps
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
