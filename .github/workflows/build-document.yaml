@@ -1,0 +1,36 @@
+name: Test
+
+on:
+  pull_request:
+
+jobs:
+  deploy-document:
+    defaults:
+      run:
+        working-directory: ./manager
+    timeout-minutes: 3
+    name: Build a resume
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Cargo
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Build document
+        run: cargo doc --document-private-items --all --open --lib --bins --all-features --no-deps --target-dir /build
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: /build
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  actions-timeline:
+    needs:
+      - deploy-document
+    permissions:
+      actions: read
+    runs-on: ubuntu-latest
+    steps:
+    - uses: Kesin11/actions-timeline@v2
