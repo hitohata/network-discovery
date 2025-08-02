@@ -85,17 +85,6 @@ impl Default for SystemInfo {
     }
 }
 
-/// scan machine usage
-pub fn machine_usage() {
-    let sys = sys_info();
-    {
-        let mut sys_guard = sys.lock().unwrap();
-        sys_guard.refresh_all();
-
-        println!("Total memory: {:?}", sys_guard.total_memory());
-    }
-}
-
 /// Instance of sysinfo::System wrapped in a Mutex for thread safety
 fn sys_info() -> &'static Mutex<sysinfo::System> {
     static SYS_INFO: OnceLock<Mutex<sysinfo::System>> = OnceLock::new();
