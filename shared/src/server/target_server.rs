@@ -1,5 +1,7 @@
-//! this is server side code for the target
-//! this function
+//! Server-side code for the target device.
+//!
+//! This module defines the `TargetServer` struct, which listens for UDP requests from the manager,
+//! processes requests for system information and usage overview, and sends appropriate responses.
 
 use crate::scan::usage;
 use crate::schemas;
