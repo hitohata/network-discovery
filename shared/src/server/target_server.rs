@@ -21,7 +21,7 @@ impl TargetServer {
     pub fn run(&self) -> std::io::Result<()> {
         let socket = UdpSocket::bind(format!("0.0.0.0:{}", crate::utils::constants::TARGET_PORT))?;
         socket.set_broadcast(true)?;
-        info!("Starting HTTP server on {}", socket.local_addr()?);
+        info!("Starting UDP server on {}", socket.local_addr()?);
 
         let mut buf = [0; 1024];
 
