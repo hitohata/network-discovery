@@ -1,0 +1,33 @@
+name: Test
+
+on:
+  pull_request:
+
+jobs:
+  code-quality:
+    defaults:
+      run:
+        working-directory: ./manager
+    timeout-minutes: 3
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Cargo
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Format Check
+        run: cargo fmt --check
+      - name: Clippy
+        run: cargo clippy --tests --examples -- -Dclippy::all
+
+  actions-timeline:
+    needs:
+      - code-quality
+    permissions:
+      actions: read
+    runs-on: ubuntu-latest
+    steps:
+    - uses: Kesin11/actions-timeline@v2

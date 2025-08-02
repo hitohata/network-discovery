@@ -1,9 +1,7 @@
-use serde_json;
 use shared::scan::usage;
 use shared::schemas;
 use std::net::UdpSocket;
 use tracing::{error, info, Level};
-use tracing_subscriber;
 
 fn main() -> std::io::Result<()> {
     tracing_subscriber::fmt()
