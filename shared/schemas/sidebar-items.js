@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["device_info","manager_messages","target_messages"]};
