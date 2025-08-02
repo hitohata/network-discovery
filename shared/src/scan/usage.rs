@@ -1,3 +1,4 @@
+use crate::schemas::device_info::{MachineInfo, MachineUsage};
 use std::sync::{Mutex, OnceLock};
 use sysinfo::System;
 
@@ -15,7 +16,7 @@ impl SystemInfo {
 
         std::thread::sleep(sysinfo::MINIMUM_CPU_UPDATE_INTERVAL);
 
-        let s = sysinfo::System::new_all();
+        let sys = sysinfo::System::new_all();
 
         let machine_info = MachineInfo {
             os: System::name().unwrap_or(String::from("OS  name not found")),
@@ -25,7 +26,7 @@ impl SystemInfo {
                 .unwrap_or(String::from("Kernel version not found")),
             number_of_cpu: System::physical_core_count().unwrap_or(0),
             arch: System::cpu_arch(),
-            brand: s.cpus()[0].brand().to_string(),
+            brand: sys.cpus()[0].brand().to_string(),
         };
 
         Self {
@@ -78,29 +79,6 @@ impl Default for SystemInfo {
     fn default() -> Self {
         Self::new()
     }
-}
-
-#[derive(Clone, Debug)]
-pub struct MachineInfo {
-    os: String,
-    os_version: String,
-    host_name: String,
-    kernel_version: String,
-    number_of_cpu: usize,
-    arch: String,
-    brand: String,
-}
-
-#[derive(Clone, Debug)]
-pub struct MachineUsage {
-    total_memory: u64,
-    used_memory: u64,
-    total_swap: u64,
-    used_swap: u64,
-    cpu_usage: Vec<f32>,
-    cpu_frequency: Vec<u64>,
-    network_down: u64,
-    network_up: u64,
 }
 
 /// scan machine usage

@@ -1,1 +1,2 @@
-pub const DISCOVERTY_PORT: u16 = 42424;
+pub const TARGET_PORT: u16 = 49152;
+pub const HOST_PORT: u16 = 49153;

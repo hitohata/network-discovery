@@ -1,6 +1,6 @@
 pub mod scan;
-mod schemas;
-mod utils;
+pub mod schemas;
+pub mod utils;
 
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
