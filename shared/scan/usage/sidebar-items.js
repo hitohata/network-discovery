@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["machine_usage","network_info","sys_info"],"struct":["SystemInfo"]};
+window.SIDEBAR_ITEMS = {"fn":["network_info","sys_info"],"struct":["SystemInfo"]};
