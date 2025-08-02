@@ -9,7 +9,7 @@ jobs:
       run:
         working-directory: ./manager
     timeout-minutes: 3
-    name: Build a resume
+    name: Build a document
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
