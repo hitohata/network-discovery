@@ -5,7 +5,7 @@ mod shared_data;
 use crate::network::search_networks;
 use std::env;
 use std::net::UdpSocket;
-use tracing::{error, info, Level};
+use tracing::{Level, error, info};
 
 fn main() {
     tracing_subscriber::fmt()
