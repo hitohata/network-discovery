@@ -1,4 +1,4 @@
-use get_if_addrs::{IfAddr, get_if_addrs};
+use get_if_addrs::{get_if_addrs, IfAddr};
 use std::net::IpAddr;
 
 pub fn search_networks() -> Option<IpAddr> {
@@ -17,7 +17,7 @@ pub fn search_networks() -> Option<IpAddr> {
             if ip.is_loopback() || ip.is_unspecified() {
                 continue;
             }
-            if !ip.is_private() {
+            if ip.is_private() {
                 return Some(IpAddr::V4(ip));
             }
         }
