@@ -47,7 +47,7 @@ impl TargetServer {
                         self.system_info.get_machine_info().to_owned(),
                     );
                     debug!("Spec response: {:?}", response);
-                    socket.send_to(&response.as_bytes(), src)?;
+                    socket.send_to(response.as_bytes(), src)?;
                 }
                 schemas::manager_messages::ManagerRequestSchema::UsageOverview(req) => {
                     info!("Received Usage Overview request from {}: {:?}", src, req);
@@ -55,7 +55,7 @@ impl TargetServer {
                         self.system_info.get_usage().to_owned(),
                     );
                     debug!("usage response: {:?}", response);
-                    socket.send_to(&response.as_bytes(), src)?;
+                    socket.send_to(response.as_bytes(), src)?;
                 }
             }
         }
