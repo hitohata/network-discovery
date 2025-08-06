@@ -1,4 +1,4 @@
-use get_if_addrs::{get_if_addrs, IfAddr};
+use get_if_addrs::{IfAddr, get_if_addrs};
 use std::net::IpAddr;
 
 pub fn search_networks() -> Option<IpAddr> {
