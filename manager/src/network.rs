@@ -12,17 +12,14 @@ pub fn search_networks() -> Option<IpAddr> {
             continue;
         }
 
-        match if_addr.addr {
-            IfAddr::V4(ipv4) => {
-                let ip = ipv4.ip;
-                if ip.is_loopback() || ip.is_unspecified() {
-                    continue;
-                }
-                if ip.is_private() {
-                    return Some(IpAddr::V4(ip));
-                }
+        if let IfAddr::V4(ipv4) = if_addr.addr {
+            let ip = ipv4.ip;
+            if ip.is_loopback() || ip.is_unspecified() {
+                continue;
             }
-            _ => {}
+            if !ip.is_private() {
+                return Some(IpAddr::V4(ip));
+            }
         }
     }
 
