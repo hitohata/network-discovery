@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ManagerRequestSchema"],"struct":["SpecRequest","UsageOverviewRequest"]};
+window.SIDEBAR_ITEMS = {"enum":["ManagerRequestSchema"],"struct":["ManagerRequest","SpecRequest","UsageOverviewRequest"]};
