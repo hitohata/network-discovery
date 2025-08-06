@@ -1,8 +1,9 @@
 use crate::schemas::device_info::{MachineInfo, MachineUsage};
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(tag = "request", rename_all = "camelCase")]
+#[serde(tag = "response", rename_all = "camelCase")]
 pub enum ResponseSchema {
     #[serde(rename = "spec")]
     Spec(SpecResponse),
@@ -23,13 +24,15 @@ pub struct UsageOverviewResponse {
 }
 
 impl SpecResponse {
-    pub fn new(spec: MachineInfo) -> Self {
-        Self { spec }
+    pub fn spec_response_json(spec: MachineInfo) -> String {
+        let response = ResponseSchema::Spec(SpecResponse { spec });
+        json!(&response).to_string()
     }
 }
 
 impl UsageOverviewResponse {
-    pub fn new(usage: MachineUsage) -> Self {
-        Self { usage }
+    pub fn usage_overview_response_json(usage: MachineUsage) -> String {
+        let response = ResponseSchema::UsageOverview(UsageOverviewResponse { usage });
+        json!(response).to_string()
     }
 }

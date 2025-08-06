@@ -4,6 +4,7 @@ members = [
     "node",
     "shared"
 ]
+resolver = "3"
 
 [workspace.dependencies]
 serde = { version = "1.0.141", features = ["derive"] }
