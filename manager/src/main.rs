@@ -5,7 +5,7 @@ mod shared_data;
 use crate::network::search_networks;
 use std::env;
 use std::net::UdpSocket;
-use tracing::{Level, error, info};
+use tracing::{error, info, Level};
 
 fn main() {
     tracing_subscriber::fmt()
@@ -33,7 +33,7 @@ fn main() {
     let socket = UdpSocket::bind(format!("{}:{}", ip, shared::utils::constants::TARGET_PORT))
         .expect("Failed to bind UDP socket");
     socket.set_broadcast(true).unwrap_or_else(|err| {
-        panic!("Failed to set broadcast UDP broadcast: {}", err);
+        panic!("Failed to set broadcast UDP broadcast: {err}");
     });
 
     loop {
