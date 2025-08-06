@@ -6,7 +6,7 @@
 use crate::scan::usage;
 use crate::schemas;
 use std::net::UdpSocket;
-use tracing::{error, info};
+use tracing::{debug, error, info};
 
 pub struct TargetServer {
     system_info: usage::SystemInfo,
@@ -43,28 +43,19 @@ impl TargetServer {
             match request {
                 schemas::manager_messages::ManagerRequestSchema::Spec(req) => {
                     info!("Received Spec request from {}: {:?}", src, req);
-                    let response = schemas::target_messages::SpecResponse::new(
+                    let response = schemas::target_messages::SpecResponse::spec_response_json(
                         self.system_info.get_machine_info().to_owned(),
                     );
-                    let Ok(response_data) = serde_json::to_vec(&response) else {
-                        error!("Failed to serialize response for Spec request from {}", src);
-                        continue;
-                    };
-                    socket.send_to(&response_data, src)?;
+                    debug!("Spec response: {:?}", response);
+                    socket.send_to(response.as_bytes(), src)?;
                 }
                 schemas::manager_messages::ManagerRequestSchema::UsageOverview(req) => {
                     info!("Received Usage Overview request from {}: {:?}", src, req);
-                    let response = schemas::target_messages::UsageOverviewResponse::new(
-                        self.system_info.get_usage(),
+                    let response = schemas::target_messages::UsageOverviewResponse::usage_overview_response_json(
+                        self.system_info.get_usage().to_owned(),
                     );
-                    let Ok(response_data) = serde_json::to_vec(&response) else {
-                        error!(
-                            "Failed to serialize response for Usage Overview request from {}",
-                            src
-                        );
-                        continue;
-                    };
-                    socket.send_to(&response_data, src)?;
+                    debug!("usage response: {:?}", response);
+                    socket.send_to(response.as_bytes(), src)?;
                 }
             }
         }

@@ -20,3 +20,26 @@ pub struct SpecRequest {
 pub struct UsageOverviewRequest {
     sender_ip: String,
 }
+
+pub struct ManagerRequest {
+    ip: String,
+}
+
+impl ManagerRequest {
+    pub fn new(ip: String) -> Self {
+        Self { ip }
+    }
+
+    pub fn spec_request_json(&self) -> String {
+        let request = ManagerRequestSchema::Spec(SpecRequest {
+            sender_ip: self.ip.clone(),
+        });
+        serde_json::to_string(&request).unwrap()
+    }
+    pub fn usage_overview_request_json(&self) -> String {
+        let request = ManagerRequestSchema::UsageOverview(UsageOverviewRequest {
+            sender_ip: self.ip.clone(),
+        });
+        serde_json::to_string(&request).unwrap()
+    }
+}
