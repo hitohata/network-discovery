@@ -2,7 +2,7 @@ mod network;
 mod servers;
 mod shared_data;
 
-use tracing::{error, Level};
+use tracing::{Level, error};
 
 const BROADCAST_ADDRESS: &str = "255.255.255.255";
 

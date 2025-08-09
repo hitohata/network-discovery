@@ -38,26 +38,34 @@ impl DiscoveryServer {
             let spec_request = request.spec_request_json();
             let usage_request = request.usage_overview_request_json();
 
-            socket
-                .send_to(
-                    spec_request.as_bytes(),
-                    format!(
-                        "{}:{}",
-                        BROADCAST_ADDRESS,
-                        shared::utils::constants::TARGET_PORT
-                    ),
-                )
-                .expect("Failed to send request"); // todo fix
-            socket
-                .send_to(
-                    usage_request.as_bytes(),
-                    format!(
-                        "{}:{}",
-                        BROADCAST_ADDRESS,
-                        shared::utils::constants::TARGET_PORT
-                    ),
-                )
-                .expect("Failed to send request"); // todo fix
+            if let Err(e) = socket.send_to(
+                spec_request.as_bytes(),
+                format!(
+                    "{}:{}",
+                    BROADCAST_ADDRESS,
+                    shared::utils::constants::TARGET_PORT
+                ),
+            ) {
+                socket
+                    .set_read_timeout(Some(std::time::Duration::from_secs(3)))
+                    .expect("Failed to set read timeout");
+                error!("Failed to send Spec request: {}", e);
+                break;
+            }
+            if let Err(e) = socket.send_to(
+                usage_request.as_bytes(),
+                format!(
+                    "{}:{}",
+                    BROADCAST_ADDRESS,
+                    shared::utils::constants::TARGET_PORT
+                ),
+            ) {
+                socket
+                    .set_read_timeout(Some(std::time::Duration::from_secs(3)))
+                    .expect("Failed to set read timeout");
+                error!("Failed to send Spec request: {}", e);
+                break;
+            }
 
             socket
                 .set_read_timeout(Some(std::time::Duration::from_secs(3)))
