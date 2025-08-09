@@ -1,3 +1,4 @@
+mod commands;
 mod network;
 mod servers;
 mod shared_data;
@@ -26,8 +27,7 @@ fn main() {
 
     // Start the DiscoverServer in a separate thread
     let discover_server_handler = std::thread::spawn(|| {
-        let discovery_server = crate::servers::discovery_server::DiscoveryServer::new();
-        discovery_server.run();
+        crate::servers::discovery_server::DiscoveryServer::run();
     });
     handlers.push(discover_server_handler);
 
