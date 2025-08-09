@@ -26,7 +26,7 @@ pub struct UsageOverviewResponse {
 impl SpecResponse {
     pub fn spec_response_json(spec: MachineInfo) -> String {
         let response = ResponseSchema::Spec(SpecResponse { spec });
-        json!(&response).to_string()
+        json!(response).to_string()
     }
 }
 
