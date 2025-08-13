@@ -6,7 +6,7 @@ mod shared_data;
 use crate::commands::DiscoveryCommand;
 use std::net::Ipv4Addr;
 use std::sync::mpsc::{Receiver, Sender};
-use tracing::{Level, error, info};
+use tracing::{error, info, Level};
 
 const BROADCAST_ADDRESS: &str = "255.255.255.255";
 
@@ -47,7 +47,7 @@ fn main() {
         loop {
             command_tx
                 .send(DiscoveryCommand::DeviceInformation(Ipv4Addr::new(
-                    192, 168, 20, 8,
+                    255, 255, 255, 255,
                 )))
                 .unwrap_or_else(|e| {
                     error!("Failed to send command: {}", e);
