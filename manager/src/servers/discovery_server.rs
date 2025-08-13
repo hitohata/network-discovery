@@ -1,6 +1,7 @@
 use crate::BROADCAST_ADDRESS;
 use crate::commands::DiscoveryCommand;
 use crate::network::search_networks;
+use shared::schemas::target_messages::ResponseSchema;
 use std::env;
 use std::net::UdpSocket;
 use std::sync::Arc;
@@ -9,20 +10,14 @@ use tracing::{error, info};
 
 pub(crate) enum Command {}
 
-pub struct DiscoveryServer {
-    command_tx: Sender<DiscoveryCommand>,
-}
+pub struct DiscoveryServer {}
 
 impl DiscoveryServer {
-    pub fn run() -> Self {
+    pub fn new() -> Self {
+        Self {}
+    }
+    pub fn run(&self, command_rx: Receiver<DiscoveryCommand>, response_tx: Sender<ResponseSchema>) {
         info!("Starting Manager...");
-
-        let (command_tx, command_rx): (Sender<DiscoveryCommand>, Receiver<DiscoveryCommand>) =
-            std::sync::mpsc::channel();
-        let (response_tx, response_rx): (
-            Sender<shared::schemas::target_messages::ResponseSchema>,
-            Receiver<shared::schemas::target_messages::ResponseSchema>,
-        ) = std::sync::mpsc::channel();
 
         let args: Vec<String> = env::args().collect();
         let ip = if args.len() < 2 {
@@ -58,7 +53,7 @@ impl DiscoveryServer {
                 match command_rx.recv() {
                     Ok(command) => match command {
                         DiscoveryCommand::DeviceUsage => {
-                            break;
+                            continue;
                         }
                         DiscoveryCommand::DeviceInformation(_ip) => {
                             if let Err(e) = command_socket.send_to(
@@ -73,20 +68,19 @@ impl DiscoveryServer {
                                     .set_read_timeout(Some(std::time::Duration::from_secs(3)))
                                     .expect("Failed to set read timeout");
                                 error!("Failed to send Spec request: {}", e);
-                                break;
+                                continue;
                             }
                         }
                     },
                     Err(e) => {
                         error!("Failed to receive command: {}", e);
-                        break;
+                        continue;
                     }
                 }
             }
         });
 
         let usage_socket = socket.clone();
-        let usage_request = request.clone();
         std::thread::spawn(move || {
             let usage_request = r.usage_overview_request_json();
             loop {
@@ -144,16 +138,19 @@ impl DiscoveryServer {
 
                     match received_data {
                         shared::schemas::target_messages::ResponseSchema::Spec(spec) => {
-                            info!("Received Spec response from {}: {:?}", src, spec);
+                            if let Err(e) = response_tx.send(ResponseSchema::Spec(spec)) {
+                                error!("Failed to send Spec response: {}", e);
+                            }
                         }
                         shared::schemas::target_messages::ResponseSchema::UsageOverview(usage) => {
-                            info!("Received Usage Overview response from {}: {:?}", src, usage);
+                            if let Err(e) = response_tx.send(ResponseSchema::UsageOverview(usage)) {
+                                error!("Failed to send Usage response: {}", e);
+                            }
                         }
                     }
                 }
                 std::thread::sleep(std::time::Duration::from_secs(5));
             }
         });
-        Self { command_tx }
     }
 }
