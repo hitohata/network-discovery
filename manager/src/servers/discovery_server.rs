@@ -8,8 +8,6 @@ use std::sync::Arc;
 use std::sync::mpsc::{Receiver, Sender};
 use tracing::{error, info};
 
-pub(crate) enum Command {}
-
 pub struct DiscoveryServer {}
 
 impl DiscoveryServer {
@@ -52,9 +50,6 @@ impl DiscoveryServer {
             loop {
                 match command_rx.recv() {
                     Ok(command) => match command {
-                        DiscoveryCommand::DeviceUsage => {
-                            continue;
-                        }
                         DiscoveryCommand::DeviceInformation(_ip) => {
                             if let Err(e) = command_socket.send_to(
                                 spec_request.as_bytes(),

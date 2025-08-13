@@ -73,9 +73,10 @@ fn main() {
         }
     }
 
-    for handler in handlers {
-        if let Err(e) = handler.join() {
-            error!("Thread panicked: {:?}", e);
-        }
-    }
+    // TODO: remove commented code below
+    // for handler in handlers {
+    //     if let Err(e) = handler.join() {
+    //         error!("Thread panicked: {:?}", e);
+    //     }
+    // }
 }
