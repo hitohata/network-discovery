@@ -7,7 +7,7 @@ mod store;
 use crate::commands::DiscoveryCommand;
 use std::net::Ipv4Addr;
 use std::sync::mpsc::{Receiver, Sender};
-use tracing::{error, info, Level};
+use tracing::{Level, error, info};
 
 const BROADCAST_ADDRESS: &str = "255.255.255.255";
 

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct MachineInfo {
     pub os: String,
     pub os_version: String,
@@ -11,7 +11,7 @@ pub struct MachineInfo {
     pub brand: String,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct MachineUsage {
     pub total_memory: u64,
     pub used_memory: u64,
