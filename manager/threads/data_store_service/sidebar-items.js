@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["DataStoreService"]};
+window.SIDEBAR_ITEMS = {"constant":["CHECK_FREQUENCY","THRESHOLD"],"struct":["DataStoreService"]};

@@ -55,10 +55,9 @@
 <a href=#55 id=55 data-nosnippet>55</a>        <span class="kw">crate</span>::threads::data_store_service::DataStoreService::new(data_store.clone());
 <a href=#56 id=56 data-nosnippet>56</a>    data_store_service.run(response_rx);
 <a href=#57 id=57 data-nosnippet>57</a>
-<a href=#58 id=58 data-nosnippet>58</a>    <span class="comment">// TODO: remove commented code below
-<a href=#59 id=59 data-nosnippet>59</a>    </span><span class="kw">for </span>handler <span class="kw">in </span>handlers {
-<a href=#60 id=60 data-nosnippet>60</a>        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = handler.join() {
-<a href=#61 id=61 data-nosnippet>61</a>            <span class="macro">error!</span>(<span class="string">"Thread panicked: {:?}"</span>, e);
-<a href=#62 id=62 data-nosnippet>62</a>        }
-<a href=#63 id=63 data-nosnippet>63</a>    }
-<a href=#64 id=64 data-nosnippet>64</a>}</code></pre></div></section></main></body></html>
+<a href=#58 id=58 data-nosnippet>58</a>    <span class="kw">for </span>handler <span class="kw">in </span>handlers {
+<a href=#59 id=59 data-nosnippet>59</a>        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = handler.join() {
+<a href=#60 id=60 data-nosnippet>60</a>            <span class="macro">error!</span>(<span class="string">"Thread panicked: {:?}"</span>, e);
+<a href=#61 id=61 data-nosnippet>61</a>        }
+<a href=#62 id=62 data-nosnippet>62</a>    }
+<a href=#63 id=63 data-nosnippet>63</a>}</code></pre></div></section></main></body></html>
