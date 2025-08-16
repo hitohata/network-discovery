@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["discovery_server"]};
