@@ -55,7 +55,6 @@ fn main() {
         crate::threads::data_store_service::DataStoreService::new(data_store.clone());
     data_store_service.run(response_rx);
 
-    // TODO: remove commented code below
     for handler in handlers {
         if let Err(e) = handler.join() {
             error!("Thread panicked: {:?}", e);

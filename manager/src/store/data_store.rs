@@ -66,20 +66,21 @@ pub struct NodeData {
 
 pub struct DataStore {
     command_tx: std::sync::Arc<Sender<crate::commands::DiscoveryCommand>>,
-    nodes: std::sync::Mutex<std::collections::HashMap<Ipv4Addr, Node>>,
+    nodes: std::sync::Arc<std::sync::Mutex<std::collections::HashMap<Ipv4Addr, Node>>>,
 }
 
 impl DataStore {
-    pub fn new(command_tx: std::sync::Arc<Sender<crate::commands::DiscoveryCommand>>) -> Self {
+    pub(crate) fn new(
+        command_tx: std::sync::Arc<Sender<crate::commands::DiscoveryCommand>>,
+    ) -> Self {
         Self {
             command_tx,
-            nodes: std::sync::Mutex::new(std::collections::HashMap::new()),
+            nodes: std::sync::Arc::new(std::sync::Mutex::new(std::collections::HashMap::new())),
         }
     }
 
     /// get nodes
-    #[allow(dead_code)]
-    pub fn get_nodes(&self) -> std::vec::Vec<NodeData> {
+    pub(crate) fn get_nodes(&self) -> std::vec::Vec<NodeData> {
         let node_lock = self.nodes.lock().unwrap();
         node_lock
             .values()
@@ -87,8 +88,14 @@ impl DataStore {
             .collect::<std::vec::Vec<NodeData>>()
     }
 
+    #[allow(dead_code)]
+    pub(crate) fn get_node(&self, ip: Ipv4Addr) -> Option<NodeData> {
+        let node_lock = self.nodes.lock().unwrap();
+        node_lock.get(&ip).map(|node| node.to_node_data())
+    }
+
     /// Add or update a node's data
-    pub fn update_usage(&mut self, ip: Ipv4Addr, machine_usage: MachineUsage) {
+    pub(crate) fn update_usage(&mut self, ip: Ipv4Addr, machine_usage: MachineUsage) {
         let mut node_lock = self.nodes.lock().unwrap();
 
         node_lock
@@ -110,7 +117,7 @@ impl DataStore {
 
     /// Add the machine info to the node
     /// If there is no node with the given IP, do nothing
-    pub fn update_node_information(&mut self, ip: Ipv4Addr, machine_info: MachineInfo) {
+    pub(crate) fn update_node_information(&mut self, ip: Ipv4Addr, machine_info: MachineInfo) {
         let mut node_lock = self.nodes.lock().unwrap();
 
         if let Some(node) = node_lock.get_mut(&ip) {
@@ -119,8 +126,7 @@ impl DataStore {
     }
 
     /// Remove a node from the data store
-    #[allow(dead_code)]
-    fn remove_node(&mut self, ip: &Ipv4Addr) {
+    pub(crate) fn remove_node(&mut self, ip: &Ipv4Addr) {
         let mut node_lock = self.nodes.lock().unwrap();
         node_lock.remove(ip);
     }

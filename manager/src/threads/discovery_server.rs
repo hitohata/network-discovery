@@ -5,7 +5,7 @@ use shared::utils::tools::get_ip;
 use std::net::UdpSocket;
 use std::sync::Arc;
 use std::sync::mpsc::{Receiver, Sender};
-use tracing::{error, info};
+use tracing::{debug, error, info};
 
 pub struct DiscoveryServer {}
 
@@ -39,14 +39,11 @@ impl DiscoveryServer {
             loop {
                 match command_rx.recv() {
                     Ok(command) => match command {
-                        DiscoveryCommand::DeviceInformation(_ip) => {
+                        DiscoveryCommand::DeviceInformation(target_ip) => {
+                            debug!("Device Info Request: {:?}", target_ip);
                             if let Err(e) = command_socket.send_to(
                                 spec_request.as_bytes(),
-                                format!(
-                                    "{}:{}",
-                                    BROADCAST_ADDRESS,
-                                    shared::utils::constants::TARGET_PORT
-                                ),
+                                format!("{}:{}", target_ip, shared::utils::constants::TARGET_PORT),
                             ) {
                                 command_socket
                                     .set_read_timeout(Some(std::time::Duration::from_secs(3)))
