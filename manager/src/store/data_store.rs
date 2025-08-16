@@ -36,10 +36,10 @@ impl Node {
     /// update the machine info
     fn update_info(&mut self, machine_info: MachineInfo) {
         // if the machine info is different, reset the usage queue
-        if let Some(info) = &self.machine_info {
-            if info != &machine_info {
-                self.usage = std::collections::VecDeque::with_capacity(5 * 100);
-            }
+        if let Some(info) = &self.machine_info
+            && info != &machine_info
+        {
+            self.usage = std::collections::VecDeque::with_capacity(5 * 100);
         }
         self.machine_info = Some(machine_info);
     }
