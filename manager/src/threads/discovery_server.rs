@@ -1,8 +1,7 @@
 use crate::BROADCAST_ADDRESS;
 use crate::commands::DiscoveryCommand;
-use crate::network::search_networks;
 use shared::schemas::target_messages::ResponseSchema;
-use std::env;
+use shared::utils::tools::get_ip;
 use std::net::UdpSocket;
 use std::sync::Arc;
 use std::sync::mpsc::{Receiver, Sender};
@@ -17,20 +16,10 @@ impl DiscoveryServer {
     pub fn run(&self, command_rx: Receiver<DiscoveryCommand>, response_tx: Sender<ResponseSchema>) {
         info!("Starting Manager...");
 
-        let args: Vec<String> = env::args().collect();
-        let ip = if args.len() < 2 {
-            match search_networks() {
-                Some(ip) => ip.to_string(),
-                None => {
-                    panic!("No valid IP address found.");
-                }
-            }
-        } else {
-            args[1].to_string()
-        };
+        let ip = get_ip();
 
         let request = Arc::new(shared::schemas::manager_messages::ManagerRequest::new(
-            ip.clone(),
+            ip.to_string(),
         ));
 
         let socket = Arc::new(
