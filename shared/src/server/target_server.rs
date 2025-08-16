@@ -5,6 +5,7 @@
 
 use crate::scan::usage;
 use crate::schemas;
+use crate::utils::tools::get_ip;
 use std::net::UdpSocket;
 use tracing::{debug, error, info};
 
@@ -19,7 +20,12 @@ impl TargetServer {
     }
 
     pub fn run(&self) -> std::io::Result<()> {
-        let socket = UdpSocket::bind(format!("0.0.0.0:{}", crate::utils::constants::TARGET_PORT))?;
+        let ip = get_ip();
+        let socket = UdpSocket::bind(format!(
+            "{}:{}",
+            "0.0.0.0",
+            crate::utils::constants::TARGET_PORT
+        ))?;
         socket.set_broadcast(true)?;
         info!("Starting UDP server on {}", socket.local_addr()?);
 
@@ -44,6 +50,7 @@ impl TargetServer {
                 schemas::manager_messages::ManagerRequestSchema::Spec(req) => {
                     info!("Received Spec request from {}: {:?}", src, req);
                     let response = schemas::target_messages::SpecResponse::spec_response_json(
+                        ip,
                         self.system_info.get_machine_info().to_owned(),
                     );
                     debug!("Spec response: {:?}", response);
@@ -52,6 +59,7 @@ impl TargetServer {
                 schemas::manager_messages::ManagerRequestSchema::UsageOverview(req) => {
                     info!("Received Usage Overview request from {}: {:?}", src, req);
                     let response = schemas::target_messages::UsageOverviewResponse::usage_overview_response_json(
+                        ip,
                         self.system_info.get_usage().to_owned(),
                     );
                     debug!("usage response: {:?}", response);

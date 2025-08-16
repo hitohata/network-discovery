@@ -176,7 +176,6 @@ name = "manager"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "get_if_addrs",
  "serde_json",
  "shared",
  "tracing",
@@ -391,6 +390,7 @@ dependencies = [
 name = "shared"
 version = "0.1.0"
 dependencies = [
+ "get_if_addrs",
  "serde",
  "serde_json",
  "sysinfo",
