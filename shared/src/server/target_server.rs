@@ -23,7 +23,6 @@ impl TargetServer {
         let ip = get_ip();
         let socket = UdpSocket::bind(format!(
             "{}:{}",
-            // ip.to_string(),
             "0.0.0.0",
             crate::utils::constants::TARGET_PORT
         ))?;
