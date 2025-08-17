@@ -6,7 +6,7 @@
 use crate::scan::usage;
 use crate::schemas;
 use crate::utils::tools::get_ip;
-use std::net::UdpSocket;
+use tokio::net::UdpSocket;
 use tracing::{debug, error, info};
 
 pub struct TargetServer {
@@ -19,20 +19,21 @@ impl TargetServer {
         Self { system_info }
     }
 
-    pub fn run(&self) -> std::io::Result<()> {
+    pub async fn run(&self) -> std::io::Result<()> {
         let ip = get_ip();
         let socket = UdpSocket::bind(format!(
             "{}:{}",
             "0.0.0.0",
             crate::utils::constants::TARGET_PORT
-        ))?;
+        ))
+        .await?;
         socket.set_broadcast(true)?;
         info!("Starting UDP server on {}", socket.local_addr()?);
 
         let mut buf = [0; 1024];
 
         loop {
-            let (amt, src) = socket.recv_from(&mut buf)?;
+            let (amt, src) = socket.recv_from(&mut buf).await?;
             let received_data = &buf[..amt];
 
             let Ok(request) = serde_json::from_slice::<
@@ -54,7 +55,7 @@ impl TargetServer {
                         self.system_info.get_machine_info().to_owned(),
                     );
                     debug!("Spec response: {:?}", response);
-                    socket.send_to(response.as_bytes(), src)?;
+                    socket.send_to(response.as_bytes(), src).await?;
                 }
                 schemas::manager_messages::ManagerRequestSchema::UsageOverview(req) => {
                     info!("Received Usage Overview request from {}: {:?}", src, req);
@@ -63,7 +64,7 @@ impl TargetServer {
                         self.system_info.get_usage().to_owned(),
                     );
                     debug!("usage response: {:?}", response);
-                    socket.send_to(response.as_bytes(), src)?;
+                    socket.send_to(response.as_bytes(), src).await?;
                 }
             }
         }
