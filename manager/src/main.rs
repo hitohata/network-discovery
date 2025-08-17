@@ -5,12 +5,12 @@ mod threads;
 
 use crate::commands::DiscoveryCommand;
 use crate::store::data_store::DataStore;
-use std::sync::mpsc::{Receiver, Sender};
 use tracing::{Level, error};
 
 const BROADCAST_ADDRESS: &str = "255.255.255.255";
 
-fn main() {
+#[tokio::main]
+async fn main() {
     // set up tracing for logging
     tracing_subscriber::fmt()
         .with_env_filter(Level::INFO.as_str())
@@ -22,23 +22,23 @@ fn main() {
     let mut handlers = vec![];
 
     // channel for commands
-    let (command_tx, command_rx): (Sender<DiscoveryCommand>, Receiver<DiscoveryCommand>) =
-        std::sync::mpsc::channel();
-    let command_tx = std::sync::Arc::new(command_tx);
+    let (command_tx, command_rx): (
+        tokio::sync::mpsc::Sender<DiscoveryCommand>,
+        tokio::sync::mpsc::Receiver<DiscoveryCommand>,
+    ) = tokio::sync::mpsc::channel(32);
     // channel for data
     let (response_tx, response_rx): (
-        Sender<shared::schemas::target_messages::ResponseSchema>,
-        Receiver<shared::schemas::target_messages::ResponseSchema>,
-    ) = std::sync::mpsc::channel();
+        tokio::sync::broadcast::Sender<shared::schemas::target_messages::ResponseSchema>,
+        tokio::sync::broadcast::Receiver<shared::schemas::target_messages::ResponseSchema>,
+    ) = tokio::sync::broadcast::channel(32);
 
     let data_store_command_tx = command_tx.clone();
-    let data_store =
-        std::sync::Arc::new(std::sync::Mutex::new(DataStore::new(data_store_command_tx)));
+    let data_store = std::sync::Arc::new(tokio::sync::Mutex::new(DataStore::new()));
 
     // Start the TargetServer in a separate thread
-    let target_handler = std::thread::spawn(|| {
+    let target_handler = tokio::spawn(async {
         let target_server = shared::server::target_server::TargetServer::new();
-        target_server.run().unwrap_or_else(|e| {
+        target_server.run().await.unwrap_or_else(|e| {
             error!("Failed to run TargetServer: {}", e);
         });
     });
@@ -47,16 +47,16 @@ fn main() {
     // Start the DiscoverServer in a separate thread
     let discovery_server = crate::threads::discovery_server::DiscoveryServer::new();
     let discover_server_handler =
-        std::thread::spawn(move || discovery_server.run(command_rx, response_tx.clone()));
+        tokio::spawn(async move { discovery_server.run(command_rx, response_tx.clone()).await });
     handlers.push(discover_server_handler);
 
     // run data store service
     let data_store_service =
         crate::threads::data_store_service::DataStoreService::new(data_store.clone());
-    data_store_service.run(response_rx);
+    data_store_service.run(data_store_command_tx, response_rx);
 
     for handler in handlers {
-        if let Err(e) = handler.join() {
+        if let Err(e) = handler.await {
             error!("Thread panicked: {:?}", e);
         }
     }

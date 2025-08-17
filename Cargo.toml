@@ -11,3 +11,4 @@ serde = { version = "1.0.141", features = ["derive"] }
 serde_json = { version = "1.0.141" }
 tracing = { version = "0.1.37", features = ["log"] }
 tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
+tokio = { version = "1.44.0", features = ["rt-multi-thread", "net", "macros", "sync", "time"] }

@@ -2,8 +2,6 @@
 
 use shared::schemas::device_info::{MachineInfo, MachineUsage};
 use std::net::Ipv4Addr;
-use std::sync::mpsc::Sender;
-use tracing::error;
 
 struct Node {
     ip: Ipv4Addr,
@@ -65,23 +63,19 @@ pub struct NodeData {
 }
 
 pub struct DataStore {
-    command_tx: std::sync::Arc<Sender<crate::commands::DiscoveryCommand>>,
-    nodes: std::sync::Arc<std::sync::Mutex<std::collections::HashMap<Ipv4Addr, Node>>>,
+    nodes: std::sync::Arc<std::sync::RwLock<std::collections::HashMap<Ipv4Addr, Node>>>,
 }
 
 impl DataStore {
-    pub(crate) fn new(
-        command_tx: std::sync::Arc<Sender<crate::commands::DiscoveryCommand>>,
-    ) -> Self {
+    pub(crate) fn new() -> Self {
         Self {
-            command_tx,
-            nodes: std::sync::Arc::new(std::sync::Mutex::new(std::collections::HashMap::new())),
+            nodes: std::sync::Arc::new(std::sync::RwLock::new(std::collections::HashMap::new())),
         }
     }
 
     /// get nodes
     pub(crate) fn get_nodes(&self) -> std::vec::Vec<NodeData> {
-        let node_lock = self.nodes.lock().unwrap();
+        let node_lock = self.nodes.read().unwrap();
         node_lock
             .values()
             .map(|node| node.to_node_data())
@@ -90,35 +84,24 @@ impl DataStore {
 
     #[allow(dead_code)]
     pub(crate) fn get_node(&self, ip: Ipv4Addr) -> Option<NodeData> {
-        let node_lock = self.nodes.lock().unwrap();
+        let node_lock = self.nodes.read().unwrap();
         node_lock.get(&ip).map(|node| node.to_node_data())
     }
 
     /// Add or update a node's data
     pub(crate) fn update_usage(&mut self, ip: Ipv4Addr, machine_usage: MachineUsage) {
-        let mut node_lock = self.nodes.lock().unwrap();
+        let mut node_lock = self.nodes.write().unwrap();
 
         node_lock
             .entry(ip)
-            .and_modify(|node| {
-                node.update_usage(machine_usage.clone());
-            })
-            .or_insert_with(|| {
-                // get the machine info from the target
-                if let Err(e) = self
-                    .command_tx
-                    .send(crate::commands::DiscoveryCommand::DeviceInformation(ip))
-                {
-                    error!("Failed to send Spec request: {}", e);
-                };
-                Node::new(ip, None, machine_usage.clone())
-            });
+            .and_modify(|node| node.update_usage(machine_usage.clone()))
+            .or_insert_with(|| Node::new(ip, None, machine_usage));
     }
 
     /// Add the machine info to the node
     /// If there is no node with the given IP, do nothing
     pub(crate) fn update_node_information(&mut self, ip: Ipv4Addr, machine_info: MachineInfo) {
-        let mut node_lock = self.nodes.lock().unwrap();
+        let mut node_lock = self.nodes.write().unwrap();
 
         if let Some(node) = node_lock.get_mut(&ip) {
             node.update_info(machine_info);
@@ -127,7 +110,7 @@ impl DataStore {
 
     /// Remove a node from the data store
     pub(crate) fn remove_node(&mut self, ip: &Ipv4Addr) {
-        let mut node_lock = self.nodes.lock().unwrap();
+        let mut node_lock = self.nodes.write().unwrap();
         node_lock.remove(ip);
     }
 }
