@@ -1,6 +1,6 @@
 //! The data store of nodes.
 
-use shared::schemas::device_info::{MachineInfo, MachineUsage};
+use crate::schemas::device_info::{MachineInfo, MachineUsage};
 use std::net::Ipv4Addr;
 
 struct Node {
@@ -54,7 +54,6 @@ impl Node {
 
 /// The DTO of node data.
 #[derive(Debug, Clone)]
-#[allow(dead_code)]
 pub struct NodeData {
     pub ip: Ipv4Addr,
     pub machine_info: Option<MachineInfo>,
@@ -62,19 +61,27 @@ pub struct NodeData {
     pub last_updated: std::time::SystemTime,
 }
 
+pub type DataStoreType = std::sync::Arc<tokio::sync::RwLock<DataStore>>;
+
 pub struct DataStore {
     nodes: std::sync::Arc<std::sync::RwLock<std::collections::HashMap<Ipv4Addr, Node>>>,
 }
 
 impl DataStore {
-    pub(crate) fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             nodes: std::sync::Arc::new(std::sync::RwLock::new(std::collections::HashMap::new())),
         }
     }
+    /// This method returns `DataStore` with Arc<RwLock<DataStore>>
+    pub fn init() -> DataStoreType {
+        std::sync::Arc::new(tokio::sync::RwLock::new(Self {
+            nodes: std::sync::Arc::new(std::sync::RwLock::new(std::collections::HashMap::new())),
+        }))
+    }
 
     /// get nodes
-    pub(crate) fn get_nodes(&self) -> std::vec::Vec<NodeData> {
+    pub fn get_nodes(&self) -> std::vec::Vec<NodeData> {
         let node_lock = self.nodes.read().unwrap();
         node_lock
             .values()
@@ -82,14 +89,13 @@ impl DataStore {
             .collect::<std::vec::Vec<NodeData>>()
     }
 
-    #[allow(dead_code)]
-    pub(crate) fn get_node(&self, ip: Ipv4Addr) -> Option<NodeData> {
+    pub fn get_node(&self, ip: Ipv4Addr) -> Option<NodeData> {
         let node_lock = self.nodes.read().unwrap();
         node_lock.get(&ip).map(|node| node.to_node_data())
     }
 
     /// Add or update a node's data
-    pub(crate) fn update_usage(&mut self, ip: Ipv4Addr, machine_usage: MachineUsage) {
+    pub fn update_usage(&mut self, ip: Ipv4Addr, machine_usage: MachineUsage) {
         let mut node_lock = self.nodes.write().unwrap();
 
         node_lock
@@ -100,7 +106,7 @@ impl DataStore {
 
     /// Add the machine info to the node
     /// If there is no node with the given IP, do nothing
-    pub(crate) fn update_node_information(&mut self, ip: Ipv4Addr, machine_info: MachineInfo) {
+    pub fn update_node_information(&mut self, ip: Ipv4Addr, machine_info: MachineInfo) {
         let mut node_lock = self.nodes.write().unwrap();
 
         if let Some(node) = node_lock.get_mut(&ip) {
@@ -109,8 +115,13 @@ impl DataStore {
     }
 
     /// Remove a node from the data store
-    pub(crate) fn remove_node(&mut self, ip: &Ipv4Addr) {
+    pub fn remove_node(&mut self, ip: &Ipv4Addr) {
         let mut node_lock = self.nodes.write().unwrap();
         node_lock.remove(ip);
+    }
+}
+impl Default for DataStore {
+    fn default() -> Self {
+        Self::new()
     }
 }
