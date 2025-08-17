@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["scan","schemas","server","utils"]};
+window.SIDEBAR_ITEMS = {"mod":["commands","scan","schemas","server","store","utils"]};

@@ -1,9 +1,9 @@
 (function() {
-    var implementors = Object.fromEntries([["shared",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.89.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"shared/scan/usage/struct.SystemInfo.html\" title=\"struct shared::scan::usage::SystemInfo\">SystemInfo</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.89.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"shared/server/target_server/struct.TargetServer.html\" title=\"struct shared::server::target_server::TargetServer\">TargetServer</a>"]]]]);
+    var implementors = Object.fromEntries([["shared",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.89.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"shared/scan/usage/struct.SystemInfo.html\" title=\"struct shared::scan::usage::SystemInfo\">SystemInfo</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.89.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"shared/server/target_server/struct.TargetServer.html\" title=\"struct shared::server::target_server::TargetServer\">TargetServer</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.89.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"shared/store/data_store/struct.DataStore.html\" title=\"struct shared::store::data_store::DataStore\">DataStore</a>"]]]]);
     if (window.register_implementors) {
         window.register_implementors(implementors);
     } else {
         window.pending_implementors = implementors;
     }
 })()
-//{"start":57,"fragment_lengths":[620]}
+//{"start":57,"fragment_lengths":[920]}

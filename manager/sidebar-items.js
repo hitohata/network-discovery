@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["BROADCAST_ADDRESS"],"fn":["main"],"mod":["commands","shared_data","store","threads"]};
+window.SIDEBAR_ITEMS = {"fn":["main"]};

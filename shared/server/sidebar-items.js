@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["target_server"]};
+window.SIDEBAR_ITEMS = {"mod":["manager_server","manager_threads","target_server"]};
