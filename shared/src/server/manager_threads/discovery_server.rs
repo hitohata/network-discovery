@@ -1,10 +1,11 @@
-use crate::BROADCAST_ADDRESS;
 use crate::commands::DiscoveryCommand;
-use shared::schemas::target_messages::ResponseSchema;
-use shared::utils::tools::get_ip;
+use crate::schemas::target_messages::ResponseSchema;
+use crate::utils::tools::get_ip;
 use std::sync::Arc;
 use tokio::net::UdpSocket;
 use tracing::{debug, error, info};
+
+const BROADCAST_ADDRESS: &str = "255.255.255.255";
 
 pub struct DiscoveryServer {}
 
@@ -21,12 +22,12 @@ impl DiscoveryServer {
 
         let ip = get_ip();
 
-        let request = Arc::new(shared::schemas::manager_messages::ManagerRequest::new(
+        let request = Arc::new(crate::schemas::manager_messages::ManagerRequest::new(
             ip.to_string(),
         ));
 
         let socket = Arc::new(
-            UdpSocket::bind(format!("{}:{}", ip, shared::utils::constants::HOST_PORT))
+            UdpSocket::bind(format!("{}:{}", ip, crate::utils::constants::HOST_PORT))
                 .await
                 .expect("Failed to bind UDP socket"),
         );
@@ -51,7 +52,7 @@ impl DiscoveryServer {
                                     format!(
                                         "{}:{}",
                                         target_ip,
-                                        shared::utils::constants::TARGET_PORT
+                                        crate::utils::constants::TARGET_PORT
                                     ),
                                 )
                                 .await
@@ -79,7 +80,7 @@ impl DiscoveryServer {
                         format!(
                             "{}:{}",
                             BROADCAST_ADDRESS,
-                            shared::utils::constants::TARGET_PORT
+                            crate::utils::constants::TARGET_PORT
                         ),
                     )
                     .await
@@ -106,7 +107,7 @@ impl DiscoveryServer {
                 let received_data = &buf[..amt];
 
                 let Ok(received_data) = serde_json::from_slice::<
-                    shared::schemas::target_messages::ResponseSchema,
+                    crate::schemas::target_messages::ResponseSchema,
                 >(received_data) else {
                     error!(
                         "Failed to parse received data from {}: {:?}",
@@ -121,12 +122,12 @@ impl DiscoveryServer {
                 };
 
                 match received_data {
-                    shared::schemas::target_messages::ResponseSchema::Spec(spec) => {
+                    crate::schemas::target_messages::ResponseSchema::Spec(spec) => {
                         if let Err(e) = response_tx.send(ResponseSchema::Spec(spec)) {
                             error!("Failed to send Spec response: {}", e);
                         }
                     }
-                    shared::schemas::target_messages::ResponseSchema::UsageOverview(usage) => {
+                    crate::schemas::target_messages::ResponseSchema::UsageOverview(usage) => {
                         if let Err(e) = response_tx.send(ResponseSchema::UsageOverview(usage)) {
                             error!("Failed to send Usage response: {}", e);
                         }
