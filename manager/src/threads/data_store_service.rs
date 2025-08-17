@@ -68,16 +68,15 @@ impl DataStoreService {
                             drop(lock);
 
                             // if node is None, it means this is a new node
-                            if node.is_none() {
-                                if let Err(e) = command_tx
+                            if node.is_none()
+                                && let Err(e) = command_tx
                                     .send(crate::commands::DiscoveryCommand::DeviceInformation(
                                         usage_response.ip,
                                     ))
                                     .await
-                                {
-                                    error!("Failed to send Spec request: {}", e);
-                                };
-                            }
+                            {
+                                error!("Failed to send Spec request: {}", e);
+                            };
                         }
                     }
                 }
