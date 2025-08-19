@@ -95,7 +95,7 @@ impl DataStoreService {
         loop {
             // read node
             let lock = data_store.read().await;
-            let nodes = lock.get_nodes();
+            let nodes = lock.get_node_status();
             drop(lock);
 
             let now = SystemTime::now();
