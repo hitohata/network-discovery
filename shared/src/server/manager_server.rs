@@ -44,6 +44,7 @@ impl ManagerServer {
 
         let data_store_command_tx = self.command_tx.clone();
 
+        // manager server
         let discovery_server =
             crate::server::manager_threads::discovery_server::DiscoveryServer::new();
         let response_rx = self.response_tx.subscribe();
@@ -54,13 +55,19 @@ impl ManagerServer {
         });
         handlers.push(discover_server_handler);
 
+        // node_server
+        let node_server = crate::server::target_server::TargetServer::new();
+        let node_server_handler = tokio::spawn(async move {
+            node_server.run().await.expect("TODO: panic message");
+        });
+        handlers.push(node_server_handler);
+
         // run data store service
         let data_store_for_service = self.data_store.clone();
         let data_store_service =
             crate::server::manager_threads::data_store_service::DataStoreService::new(
                 data_store_for_service,
             );
-        // let mut response_rx = self.response_tx.subscribe();
         data_store_service.run(data_store_command_tx, response_rx);
 
         for handler in handlers {

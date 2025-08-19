@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
 pub struct MachineInfo {
     pub os: String,
     pub os_version: String,
@@ -12,6 +13,7 @@ pub struct MachineInfo {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct MachineUsage {
     pub total_memory: u64,
     pub used_memory: u64,

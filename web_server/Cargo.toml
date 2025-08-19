@@ -1,0 +1,13 @@
+[package]
+name = "web_server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+shared = { path = "../shared" }
+tokio.workspace = true
+tracing-subscriber.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+axum = { version = "0.8.4" }

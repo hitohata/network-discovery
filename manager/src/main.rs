@@ -14,22 +14,11 @@ async fn main() {
 
     let mut handlers = vec![];
 
-    let target_server = shared::server::target_server::TargetServer::new();
-    let target_server_handler = tokio::spawn(async move {
-        target_server.run().await.expect("TODO: panic message");
-    });
-    handlers.push(target_server_handler);
-
+    // start the manager server
     let data_store_for_server = data_store.clone();
     let manager_server = shared::server::manager_server::ManagerServer::new(data_store_for_server);
     let manager_server_handler = tokio::spawn(async move {
         manager_server.run().await;
     });
     handlers.push(manager_server_handler);
-
-    for handler in handlers {
-        if let Err(e) = handler.await {
-            tracing::error!("Failed to join thread: {}", e);
-        }
-    }
 }
