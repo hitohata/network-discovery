@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["DataStore","Node","NodeData"],"type":["DataStoreType"]};
+window.SIDEBAR_ITEMS = {"struct":["DataStore","MachineUsageData","MachineUsageRecord","Node","NodeData","NodeOverview"],"type":["DataStoreType"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["get_node","main","node_overview"],"mod":["return_type"],"struct":["AppState"]};
