@@ -2,8 +2,10 @@
 members = [
     "manager",
     "node",
-    "shared"
-, "web_server"]
+    "shared",
+    "web_server",
+    "native/src-tauri"
+]
 resolver = "3"
 
 [workspace.dependencies]

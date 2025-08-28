@@ -162,7 +162,7 @@ impl DataStore {
     }
 
     /// Add or update a node's data
-    pub fn update_usage(&mut self, ip: Ipv4Addr, machine_usage: MachineUsage) {
+    pub(crate) fn update_usage(&mut self, ip: Ipv4Addr, machine_usage: MachineUsage) {
         let mut node_lock = self.nodes.write().unwrap();
 
         node_lock
@@ -173,7 +173,7 @@ impl DataStore {
 
     /// Add the machine info to the node
     /// If there is no node with the given IP, do nothing
-    pub fn update_node_information(&mut self, ip: Ipv4Addr, machine_info: MachineInfo) {
+    pub(crate) fn update_node_information(&mut self, ip: Ipv4Addr, machine_info: MachineInfo) {
         let mut node_lock = self.nodes.write().unwrap();
 
         if let Some(node) = node_lock.get_mut(&ip) {
@@ -182,7 +182,7 @@ impl DataStore {
     }
 
     /// Remove a node from the data store
-    pub fn remove_node(&mut self, ip: &Ipv4Addr) {
+    pub(crate) fn remove_node(&mut self, ip: &Ipv4Addr) {
         let mut node_lock = self.nodes.write().unwrap();
         node_lock.remove(ip);
     }
