@@ -1,25 +1,56 @@
-use shared::store::data_store::DataStore;
+mod commands;
 
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+use crate::commands::{get_node_detail, get_nodes};
+use shared::store::data_store::{DataStore, DataStoreType};
+use tauri::Manager;
+
 #[tauri::command]
 fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+    format!("Hello, {name}")
 }
 
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
+pub(crate) struct AppState {
+    #[cfg(not(mobile))]
+    pub data_store: DataStoreType,
+}
+
+#[cfg(mobile)]
+#[tauri::mobile_entry_point]
+fn main() {
+    build_app()
+}
+
+#[cfg(not(mobile))]
 #[tokio::main]
 pub async fn run() {
+    build_app()
+}
 
-    let data_store = DataStore::init();
-    let data_store_for_server = data_store.clone();
-    let manager_server = shared::server::manager_server::ManagerServer::new(data_store_for_server);
-    tokio::spawn(async move {
-        manager_server.run().await;
-    });
-
+fn build_app() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet, get_node_detail, get_nodes])
+        .setup(|app| {
+            // run thread when it is not mobile
+            #[cfg(not(mobile))]
+            {
+                let data_store = DataStore::init();
+
+                let manager_server = shared::server::manager_server::ManagerServer::new(
+                    std::sync::Arc::clone(&data_store),
+                );
+
+                app.manage(AppState {
+                    data_store: std::sync::Arc::clone(&data_store),
+                });
+
+                tauri::async_runtime::spawn(async move {
+                    manager_server.run().await;
+                });
+            }
+
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
