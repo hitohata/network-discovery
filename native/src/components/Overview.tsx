@@ -19,21 +19,22 @@ export const NodeOverview = (overview: NodeOverviewType) => {
 					</p>
 				</div>
 			)}
-            <h3>Usage</h3>
-            {overview.usage && (
-                <div>
-                    <p>
-                        Memory: {overview.usage.usedMemory} / {overview.usage.totalMemory} MB
-                    </p>
-                    <p>
-                        Swap: {overview.usage.usedSwap} / {overview.usage.totalSwap} MB
-                    </p>
-                    <p>CPU Usage: {overview.usage.cpuUsage.join(", ")} %</p>
-                    <p>CPU Frequency: {overview.usage.cpuFrequency.join(", ")} MHz</p>
-                    <p>Network Down: {overview.usage.networkDown} bytes</p>
-                    <p>Network Up: {overview.usage.networkUp} bytes</p>
-                </div>
-            )}
+			<h3>Usage</h3>
+			{overview.usage && (
+				<div>
+					<p>
+						Memory: {overview.usage.usedMemory} / {overview.usage.totalMemory}{" "}
+						MB
+					</p>
+					<p>
+						Swap: {overview.usage.usedSwap} / {overview.usage.totalSwap} MB
+					</p>
+					<p>CPU Usage: {overview.usage.cpuUsage.join(", ")} %</p>
+					<p>CPU Frequency: {overview.usage.cpuFrequency.join(", ")} MHz</p>
+					<p>Network Down: {overview.usage.networkDown} bytes</p>
+					<p>Network Up: {overview.usage.networkUp} bytes</p>
+				</div>
+			)}
 		</div>
 	);
 };

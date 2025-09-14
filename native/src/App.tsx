@@ -11,7 +11,7 @@ function App() {
 		const getNodeOverview = async () => {
 			setNodeOverview(await invoke("get_nodes"));
 		};
-		getNodeOverview().catch(e => console.error(e));
+		getNodeOverview().catch((e) => console.error(e));
 	}, []);
 
 	return (
